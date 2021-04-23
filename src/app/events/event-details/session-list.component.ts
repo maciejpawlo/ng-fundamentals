@@ -8,7 +8,7 @@ import { ISession } from '../shared/event.model';
 })
 export class SessionListComponent implements OnInit {
 
-  @Input() sessions!: ISession[];
+  @Input() sessions: ISession[] = [];
 
   constructor() { }
 

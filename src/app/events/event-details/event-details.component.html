@@ -13,12 +13,16 @@
       <div><strong>Time:</strong> {{event?.time}}</div>
       <div><strong>Price:</strong> ${{event?.price}}</div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6" *ngIf="event?.location">
       <address>
         <strong>Address:</strong><br />
         {{event?.location?.address}}<br />
         {{event?.location?.city}}, {{event?.location?.country}}
       </address>
+    </div>
+    <div *ngIf="event?.onlineUrl">
+      <strong>Online URL: </strong>
+      <a href="{{event?.onlineUrl}}">{{event?.onlineUrl}}</a>
     </div>
   </div>
 
@@ -29,11 +33,11 @@
       <h3 style="margin: 0;">Sessions</h3>
     </div>
 
-    <div class="col-md-2">
-      <a (click)="addSession()">Add Session</a>
+    <div class="col-md-8" *ngIf="!addMode">
+      <a style="margin: 0; float:right;" (click)="addSession()">Add Session</a>
     </div>
   </div>
 
-  <session-list *ngIf="!addMode" [sessions]="event?.sessions "></session-list>
+  <session-list *ngIf="!addMode" [sessions]="event?.sessions!"></session-list>
   <create-session *ngIf="addMode" (saveNewSession)="saveSession($event)" (cancelAddSession)="cancelAdd()"></create-session>
 </div>
