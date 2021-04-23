@@ -23,7 +23,7 @@ export class CreateSessionComponent implements OnInit {
     this.presenter = new FormControl('', Validators.required);
     this.duration = new FormControl('', Validators.required);
     this.level = new FormControl('', Validators.required);
-    this.abstract = new FormControl('', [Validators.required, Validators.maxLength(400)]);
+    this.abstract = new FormControl('', [Validators.required, Validators.maxLength(400), this.restrictedWords(['foo','bar'])]);
 
     this.newSessionForm = new FormGroup({
       name: this.name,
@@ -32,6 +32,21 @@ export class CreateSessionComponent implements OnInit {
       level: this.level,
       abstract: this.abstract
     });
+  }
+
+  // private restrictedWords(control: FormControl): {[key: string]: any} {
+  //   return control.value.includes('foo') ? {'restrictedWord': 'foo'} : null!;
+  // } //todo zmienic pozniej na directive
+
+  private restrictedWords(words: string[]) {
+    return (control: FormControl): {[key: string]: any} => {
+      if (!words) {
+        return null!;
+      }
+      //words.some(x=>control.value.includes(x))
+      let invalidWords = words.map(x => control.value.includes(x) ? x : null!).filter(x=>x != null);
+      return invalidWords && invalidWords.length > 0 ? {'restrictedWords': invalidWords}: null!;
+    };
   }
 
   saveSession(formValues: any): void {
