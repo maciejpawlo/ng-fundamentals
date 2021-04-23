@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ISession } from '../shared/event.model';
+import { restrictedWords } from '../shared/restriced-words.validator';
 
 @Component({
-  selector: 'app-create-session',
+  selector: 'create-session',
   templateUrl: './create-session.component.html',
   styleUrls: ['./create-session.component.css']
 })
@@ -16,6 +17,8 @@ export class CreateSessionComponent implements OnInit {
 
   newSessionForm!: FormGroup;
 
+  @Output() saveNewSession = new EventEmitter<ISession>();
+  @Output() cancelAddSession = new EventEmitter<void>();
   constructor() { }
 
   ngOnInit(): void {
@@ -23,7 +26,7 @@ export class CreateSessionComponent implements OnInit {
     this.presenter = new FormControl('', Validators.required);
     this.duration = new FormControl('', Validators.required);
     this.level = new FormControl('', Validators.required);
-    this.abstract = new FormControl('', [Validators.required, Validators.maxLength(400), this.restrictedWords(['foo','bar'])]);
+    this.abstract = new FormControl('', [Validators.required, Validators.maxLength(400), restrictedWords(['foo','bar'])]);
 
     this.newSessionForm = new FormGroup({
       name: this.name,
@@ -38,16 +41,16 @@ export class CreateSessionComponent implements OnInit {
   //   return control.value.includes('foo') ? {'restrictedWord': 'foo'} : null!;
   // } //todo zmienic pozniej na directive
 
-  private restrictedWords(words: string[]) {
-    return (control: FormControl): {[key: string]: any} => {
-      if (!words) {
-        return null!;
-      }
-      //words.some(x=>control.value.includes(x))
-      let invalidWords = words.map(x => control.value.includes(x) ? x : null!).filter(x=>x != null);
-      return invalidWords && invalidWords.length > 0 ? {'restrictedWords': invalidWords}: null!;
-    };
-  }
+  // private restrictedWords(words: string[]) {
+  //   return (control: FormControl): {[key: string]: any} => {
+  //     if (!words) {
+  //       return null!;
+  //     }
+  //     //words.some(x=>control.value.includes(x))
+  //     let invalidWords = words.map(x => control.value.includes(x) ? x : null!).filter(x=>x != null);
+  //     return invalidWords && invalidWords.length > 0 ? {'restrictedWords': invalidWords}: null!;
+  //   };
+  // }
 
   saveSession(formValues: any): void {
     let session: ISession = {
@@ -59,7 +62,12 @@ export class CreateSessionComponent implements OnInit {
       abstract: formValues.abstract,
       voters: []
     }
-    console.log(session);
+    //console.log(session);
+    this.saveNewSession.emit(session);
+  }
+
+  cancel():void{
+    this.cancelAddSession.emit();
   }
 
 }
