@@ -14,7 +14,12 @@ import { ProfileComponent } from './user/profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateSessionComponent } from './events/event-details/create-session.component';
 import { SessionListComponent } from './events/event-details/session-list.component';
+import { CollapsibleWellComponent } from './common/collapsible-well/collapsible-well.component';
+import { DurationPipe } from './events/shared/duration.pipe';
+import { Toastr, TOASTR_TOKEN } from './common/toastr2.service';
 
+let toastr:Toastr = (window as {[key: string]: any})['toastr'];
+//declare let toastr:any;
 @NgModule({
   declarations: [
     EventsAppComponent,
@@ -26,6 +31,8 @@ import { SessionListComponent } from './events/event-details/session-list.compon
     Error404Component,
     CreateSessionComponent,
     SessionListComponent,
+    CollapsibleWellComponent,
+    DurationPipe,
   ],
   imports: [
     BrowserModule,
@@ -33,7 +40,8 @@ import { SessionListComponent } from './events/event-details/session-list.compon
     ReactiveFormsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [{provide: 'canDeactivateCreateEvent', useValue: checkDirtyState}],
+  providers: [{provide: 'canDeactivateCreateEvent', useValue: checkDirtyState},
+  {provide: TOASTR_TOKEN, useValue: toastr }],
   bootstrap: [EventsAppComponent]
 })
 export class AppModule { }

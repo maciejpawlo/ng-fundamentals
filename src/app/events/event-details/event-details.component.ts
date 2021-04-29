@@ -11,6 +11,9 @@ import { EventService } from '../shared/event.service';
 export class EventDetailsComponent implements OnInit {
   addMode:boolean = false;
   event!: IEvent;
+  filterby:string = 'all';
+  sortBy!: string;
+
   constructor(private eventService: EventService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
