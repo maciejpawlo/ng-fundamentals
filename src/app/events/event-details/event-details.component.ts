@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { IEvent, ISession } from '../shared/event.model';
 import { EventService } from '../shared/event.service';
 
@@ -17,8 +17,13 @@ export class EventDetailsComponent implements OnInit {
   constructor(private eventService: EventService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    let id = +this.route.snapshot.params['id'];
-    this.event = this.eventService.getEvent(id);
+    this.route.params.forEach((params: Params)=> {
+      this.event = this.eventService.getEvent(+params['id']);
+      this.addMode=false;
+    }) //foreach => tak samo jakby na kazdym wywolac subscribe
+
+    // let id = +this.route.snapshot.params['id'];
+    // this.event = this.eventService.getEvent(id);
   }
 
 
