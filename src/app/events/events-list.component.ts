@@ -23,7 +23,14 @@ export class EventsListComponent implements OnInit {
     //     this.events = ev;
     //   }
     // }); //resolver robi to
+    //event-route-resolver.service!
     this.events = this.route.snapshot.data['events']; //przypisanie danych z resolvera
+    let test: IEvent[] = [];
+    this.eventService.getEvents().subscribe({
+      next: x=> {
+        console.log(x)
+      }
+    })
   }
 
   handleThumbnailClick(eventName: string): void {

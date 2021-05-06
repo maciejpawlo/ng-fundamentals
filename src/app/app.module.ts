@@ -20,6 +20,9 @@ import { Toastr, TOASTR_TOKEN } from './common/toastr2.service';
 import { JQ_TOKEN } from './common/jQuery.service';
 import { SimpleModalComponent } from './common/simple-modal.component';
 import { ModalTriggerDirective } from './common/modal-trigger.directive';
+import { UpvoteComponent } from './events/event-details/upvote.component';
+import { LocationValidatorDirective } from './events/location-validator.directive';
+import { HttpClientModule } from '@angular/common/http';
 
 let toastr:Toastr = (window as {[key: string]: any})['toastr'];
 let jQuery = (window as {[key: string]: any})['$'];
@@ -39,12 +42,15 @@ let jQuery = (window as {[key: string]: any})['$'];
     DurationPipe,
     SimpleModalComponent,
     ModalTriggerDirective,
+    UpvoteComponent,
+    LocationValidatorDirective,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    HttpClientModule
   ],
   providers: [{provide: 'canDeactivateCreateEvent', useValue: checkDirtyState},
   {provide: TOASTR_TOKEN, useValue: toastr },

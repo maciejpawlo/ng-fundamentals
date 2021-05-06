@@ -18,14 +18,19 @@ export class EventDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.forEach((params: Params)=> {
-      this.event = this.eventService.getEvent(+params['id']);
+      // this.eventService.getEvent(+params['id']).subscribe({
+      //   next: e => {
+      //     this.event = e;
+      //     this.addMode=false;
+      //   }
+      // }) //MOZNA TEZ PRZEZ RESOLVER
+      this.event = this.route.snapshot.data['event'];
       this.addMode=false;
     }) //foreach => tak samo jakby na kazdym wywolac subscribe
 
     // let id = +this.route.snapshot.params['id'];
     // this.event = this.eventService.getEvent(id);
   }
-
 
   addSession() {
     this.addMode = !this.addMode;
@@ -35,7 +40,8 @@ export class EventDetailsComponent implements OnInit {
     const nextId = Math.max.apply(null, this.event.sessions.map(s => s.id));
     newSession.id = nextId + 1;
     this.event.sessions.push(newSession);
-    this.eventService.updateEvent(this.event);
+    //this.eventService.updateEvent(this.event);
+    this.eventService.saveEvent(this.event).subscribe();
     this.addMode = false;
   }
 

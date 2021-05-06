@@ -11,6 +11,6 @@ export class EventRouteResolverService implements Resolve<any> {
   constructor(private eventService:EventService) { }
 
   resolve(){
-    return this.eventService.getEvents().pipe(map(events=>events))
+    return this.eventService.getEvents();
   }
 }

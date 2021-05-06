@@ -1,5 +1,7 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, EventEmitter } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { IEvent, ISession } from './event.model';
 
 @Injectable({
@@ -8,26 +10,32 @@ import { IEvent, ISession } from './event.model';
 
 export class EventService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getEvents(): Observable<IEvent[]>{
-    let subject = new Subject<IEvent[]>(); //mock service
-    setTimeout(() => {
-      subject.next(events);
-      subject.complete();
-    }, 100);
-    return subject;
+    // let subject = new Subject<IEvent[]>(); //mock service
+    // setTimeout(() => {
+    //   subject.next(events);
+    //   subject.complete();
+    // }, 100);
+    // return subject;
+    return this.http.get<IEvent[]>("/api/events")
+      .pipe(catchError(this.handleError<IEvent[]>('getEvents', [])));
   }
 
-  getEvent(id: number) : IEvent {
-    let event: IEvent = events.find(e=>e.id === id)!; //non-null assertion - zapewnienie TS ze jestesmy pewni, ze obj nie bedzie null
-    return event;
+  getEvent(id: number) : Observable<IEvent> {
+    //let event: IEvent = events.find(e=>e.id === id)!; //non-null assertion - zapewnienie TS ze jestesmy pewni, ze obj nie bedzie null
+    return this.http.get<IEvent>("/api/events/"+id).pipe(catchError(this.handleError<IEvent>('getEvent')));
   }
 
   saveEvent(event: any) {
-    event.id = 999;
-    event.session = [];
-    events.push(event);
+    let options = { headers: new HttpHeaders({'Content-Type': 'application/json'})}
+    return this.http.post<IEvent>("/api/events", event, options)
+      .pipe(catchError(this.handleError<IEvent>('saveEvent')));
+
+    // event.id = 999;
+    // event.session = [];
+    // events.push(event);
   }
 
   updateEvent(event: any) {
@@ -36,25 +44,38 @@ export class EventService {
   }
 
   searchSessions(searchTerm: string): Observable<ISession[]> {
-    let term = searchTerm.toLowerCase();
-    let result: ISession[] = [];
+    // let term = searchTerm.toLowerCase();
+    // let result: ISession[] = [];
 
-    events.forEach(event => {
-      let matchingSessions = event.sessions.filter(s=>s.name.toLowerCase().indexOf(searchTerm) > -1);
-      matchingSessions.map((session: any)=>{
-        session.eventId = event.id;
-        return session;
-      });
-      result = result.concat(matchingSessions);
-    });
-    let emitter = new EventEmitter(true);
-    setTimeout(()=>{
-      emitter.emit(result)
-    }, 100)
-    return emitter;
+    // events.forEach(event => {
+    //   let matchingSessions = event.sessions.filter(s=>s.name.toLowerCase().indexOf(searchTerm) > -1);
+    //   matchingSessions.map((session: any)=>{
+    //     session.eventId = event.id;
+    //     return session;
+    //   });
+    //   result = result.concat(matchingSessions);
+    // });
+    // let emitter = new EventEmitter(true);
+    // setTimeout(()=>{
+    //   emitter.emit(result)
+    // }, 100)
+    // return emitter;
+
+    //QUERY STRING
+    return this.http.get<ISession[]>("/api/sessions/search?search="+searchTerm)
+      .pipe(catchError(this.handleError<ISession[]>('searchSessions')));
+
+  }
+
+  private handleError<T> (operation = 'operation', result?: T){
+    return (error: any): Observable<T> => {
+      console.error(error);
+      return of(result as T);
+    }
   }
 
 }
+
 const events : IEvent[] = [
   {
     id: 1,
